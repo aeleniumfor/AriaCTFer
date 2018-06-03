@@ -30,9 +30,12 @@ func main() {
 	e.Renderer = &TemplateRenderer{
 		template.Must(template.ParseGlob("template/*.html")),
 	}
-	e.GET("/", handler.IndexPage())
-	e.GET("/register", handler.Register_GET_Page())
-	e.POST("/register", handler.Register_POST_Page())
+	e.GET("/", handler.IndexPage()).Name = "index"
+	e.GET("/register", handler.Register_GET_Page()).Name = "register_get"
+	e.POST("/register", handler.Register_POST_Page()).Name = "register_post"
+
+	e.GET("/login", handler.Login_GET_Page()).Name = "login_get"
+	e.POST("/login", handler.Login_POST_Page()).Name = "login_post"
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
