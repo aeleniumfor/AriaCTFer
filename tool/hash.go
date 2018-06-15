@@ -2,7 +2,6 @@ package tool
 
 import (
 	"golang.org/x/crypto/bcrypt"
-	"fmt"
 )
 
 func HashPassword(password string) (string, error) {
@@ -17,12 +16,4 @@ func CheckPasswordHash(password, hash string) bool {
 	} else {
 		return true
 	}
-}
-
-func main() {
-
-	hash, _ := HashPassword("test")
-	fmt.Println(hash)
-
-	fmt.Println(CheckPasswordHash("test", hash))
 }

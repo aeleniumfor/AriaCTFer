@@ -2,9 +2,14 @@ package main
 
 import (
 	"github.com/labstack/echo"
+	"github.com/gorilla/sessions"
+	"github.com/labstack/echo-contrib/session"
+
 	"AriaCTFer/handler"
 	"html/template"
 	"io"
+	"net/http"
+	"fmt"
 )
 
 /*テンプレートエンジン関連*/
@@ -25,17 +30,34 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 func main() {
 
 	e := echo.New()
+	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
+
 	e.Static("/static", "assets")
 
 	e.Renderer = &TemplateRenderer{
 		template.Must(template.ParseGlob("template/*.html")),
 	}
-	e.GET("/", handler.IndexPage()).Name = "index"
-	e.GET("/register", handler.Register_GET_Page()).Name = "register_get"
-	e.POST("/register", handler.Register_POST_Page()).Name = "register_post"
+	e.GET("/", handler.IndexPage())
+	e.GET("/register", handler.Register_GET_Page())
+	e.POST("/register", handler.Register_POST_Page())
 
-	e.GET("/login", handler.Login_GET_Page()).Name = "login_get"
-	e.POST("/login", handler.Login_POST_Page()).Name = "login_post"
+	e.GET("/login", handler.Login_GET_Page())
+	e.POST("/login", handler.Login_POST_Page())
+
+	e.GET("/logout", handler.Logout_GET_Page())
+
+	e.GET("/session", func(c echo.Context) error {
+		sess, _ := session.Get("session", c)
+		sess.Options = &sessions.Options{
+			Path:     "/",
+			MaxAge:   86400 * 7,
+			HttpOnly: true,
+		}
+		sess.Values["foo"] = "bar"
+		fmt.Println(sess.Options)
+		sess.Save(c.Request(), c.Response())
+		return c.NoContent(http.StatusOK)
+	})
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

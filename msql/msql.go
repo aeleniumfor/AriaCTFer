@@ -24,7 +24,7 @@ func errCheck(err error) {
 
 func DB_connect() *sql.DB {
 	//dbへのコネクション関数
-	conn := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s ", "root", "root", "150.95.134.161", "aria", "disable")
+	conn := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s ", "root", "root", "docker.nenesan.org", "aria", "disable")
 	db, err := sql.Open("postgres", conn)
 	errCheck(err)
 	return db
