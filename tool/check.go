@@ -1,12 +1,11 @@
 package tool
 
-func ValidationAll(email, name, password1, password2 string) bool {
+func ValidationAll(name, password1, password2, email string) bool {
 	if emailcheck(email) && passwordcheck(password1, password2) && namecheck(name, password1) {
-		return true
+		return true //すべてのチェックを通ったら
 	} else {
 		return false
 	}
-
 }
 
 func emailcheck(email string) bool {
@@ -34,13 +33,15 @@ func passwordcheck(password1, password2 string) bool {
 
 func namecheck(name, password1 string) bool {
 	if name != "" {
+		//空文字じゃなければ
 		if name != password1 {
+			//passwordとnameが一致してなければtrueを返す.
 			return true
 		} else {
 			return false
 		}
-
 	} else {
+		//空文字で渡ってきた場合
 		return false
 	}
 }

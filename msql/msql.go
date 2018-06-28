@@ -41,18 +41,18 @@ func DB_insert(name string, email string, password string) string {
 	return last_id
 }
 
-func DB_select_name(name string) {
+func DB_serch_user(name, email string) (n, e string) {//nameとemailを返す
 	db := DB_connect()
 	defer db.Close()
-	users := User{}
-	query := fmt.Sprintf("SELECT * FROM users WHERE name ='%s'", "test1")
+	query := fmt.Sprintf("SELECT * FROM users WHERE name ='%s' or email = '%s'", name, email)
 	fmt.Println(query)
 	rows, err := db.Query(query)
 	for rows.Next() {
-		rows.Scan(&users.ID, &users.Name, &users.Email, &users.Password, &users.Create_at, &users.Update_at)
+		rows.Scan(&name, email)
 		errCheck(err)
 	}
-	fmt.Println(users)
+
+	return name, email
 }
 
 func DB_select_user(name string) string {

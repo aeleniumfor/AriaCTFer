@@ -8,7 +8,6 @@ import (
 	"AriaCTFer/msql"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
-	"fmt"
 )
 
 func Err(err error) {
@@ -20,7 +19,6 @@ func Err(err error) {
 func IndexPage() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		sess, _ := session.Get("session", c)
-		fmt.Println(sess.Values)
 		if sess.Values["username"] == nil {
 			return c.Render(http.StatusOK, "index.html", nil)
 		} else {
@@ -36,17 +34,19 @@ func IndexPage() echo.HandlerFunc {
 //登録
 func Register_GET_Page() echo.HandlerFunc {
 	return func(c echo.Context) error {
+
 		return c.Render(http.StatusOK, "register.html", nil)
 	}
 }
 func Register_POST_Page() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var name string = c.FormValue("name")
-		var email string = c.FormValue("email")
 		var password1 string = c.FormValue("password1")
-		var password2 string = c.FormValue("password2")
-		var is bool = tool.ValidationAll(name, email, password1, password2)
+		var password2 string = c.FormValue("password1")
+		var email string = c.FormValue("email")
+		var is bool = tool.ValidationAll(name, password1, password2, email)
 		if is == true {
+			msql.DB_serch_user(name, email)
 			password1, _ := tool.HashPassword(password1)
 			msql.DB_insert(name, email, password1)
 			return c.Redirect(http.StatusMovedPermanently, "login_get")
@@ -66,6 +66,7 @@ func Login_GET_Page() echo.HandlerFunc {
 
 func Login_POST_Page() echo.HandlerFunc {
 	return func(c echo.Context) error {
+
 		var name string = c.FormValue("name")
 		//var email string = c.FormValue("email")
 		var password1 string = c.FormValue("password1")
@@ -90,9 +91,8 @@ func Login_POST_Page() echo.HandlerFunc {
 //ログアウト
 func Logout_GET_Page() echo.HandlerFunc {
 	return func(c echo.Context) error {
-
 		sess, err := session.Get("session", c)
-		sess.Options.MaxAge = -1
+		sess.Options.MaxAge = -1 //セッションを期限切れにする.
 		delete(sess.Values, "username")
 		sess.Save(c.Request(), c.Response())
 		Err(err)
