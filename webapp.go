@@ -8,8 +8,6 @@ import (
 	"AriaCTFer/handler"
 	"html/template"
 	"io"
-	"net/http"
-	"fmt"
 )
 
 /*テンプレートエンジン関連*/
@@ -31,7 +29,6 @@ func main() {
 
 	e := echo.New()
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
-
 	e.Static("/static", "assets")
 
 	e.Renderer = &TemplateRenderer{
@@ -46,18 +43,5 @@ func main() {
 
 	e.GET("/logout", handler.Logout_GET_Page())
 
-	e.GET("/session", func(c echo.Context) error {
-		sess, _ := session.Get("session", c)
-		sess.Options = &sessions.Options{
-			Path:     "/",
-			MaxAge:   86400 * 7,
-			HttpOnly: true,
-		}
-		sess.Values["foo"] = "bar"
-		fmt.Println(sess.Options)
-		sess.Save(c.Request(), c.Response())
-		return c.NoContent(http.StatusOK)
-	})
-
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":80"))
 }
