@@ -1,25 +1,34 @@
 version: '3'
 services:
-  postgres:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-    ports:
-        - 5432:5432
-    volumes:
-        - ./initsql:/docker-entrypoint-initdb.d
+#  postgres:
+#    image: postgres
+#    restart: always
+#    environment:
+#      POSTGRES_USER: root
+#      POSTGRES_PASSWORD: root
+#    ports:
+#        - 5432:5432
+#    volumes:
+#        - ./initsql:/docker-entrypoint-initdb.d
+
+#  postgres-gui:
+#    image: donnex/pgweb
+#    ports:
+#      - 8080:8080
+#    links:
+#      - postgres:postgres
 
   ctf:
     build: .
+    image: ctf
     container_name: ctf
     restart: always
-    depends_on:
-     - postgres
+#    depends_on:
+#     - postgres
 
   https-portal:
     image: steveltn/https-portal
+    restart: always
     ports:
       - 80:80
       - 443:443
@@ -28,12 +37,3 @@ services:
     environment:
       DOMAINS: 'docker.nenesan.org -> http://ctf'
       STAGE: 'production'
-
-#
-#  postgres-gui:
-#    image: donnex/pgweb
-#    ports:
-#      - 8080:8080
-#    links:
-#      - postgres:postgres
-#
