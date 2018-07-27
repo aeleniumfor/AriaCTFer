@@ -1,11 +1,13 @@
 package main
 
 import (
-	"github.com/labstack/echo"
 	"github.com/gorilla/sessions"
+	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
 
 	"AriaCTFer/handler"
+	"AriaCTFer/msql"
+
 	"html/template"
 	"io"
 )
@@ -26,7 +28,7 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 }
 
 func main() {
-
+	msql.DB_connect()
 	e := echo.New()
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 	e.Static("/static", "assets")

@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"net/http"
 	"github.com/labstack/echo"
+	"net/http"
 
-	"AriaCTFer/tool"
 	"AriaCTFer/msql"
+	"AriaCTFer/tool"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 )
@@ -44,7 +44,7 @@ func Register_POST_Page() echo.HandlerFunc {
 		var password1 string = c.FormValue("password1")
 		var password2 string = c.FormValue("password1")
 		var email string = c.FormValue("email")
-		var is bool = tool.ValidationAll(name, password1, password2, email)
+		is, _ := tool.ValidationAll(name, password1, password2, email)
 		if is == true {
 			msql.DB_serch_user(name, email)
 			password1, _ := tool.HashPassword(password1)
@@ -77,7 +77,7 @@ func Login_POST_Page() echo.HandlerFunc {
 				MaxAge:   86400 * 7,
 				HttpOnly: true,
 			}
-			Err(err);
+			Err(err)
 			sess.Values["username"] = name
 			sess.Save(c.Request(), c.Response())
 

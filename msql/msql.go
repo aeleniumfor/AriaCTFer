@@ -2,8 +2,9 @@ package msql
 
 import (
 	"database/sql"
-	_ "github.com/lib/pq"
 	"fmt"
+	_ "github.com/lib/pq"
+	"os"
 	"time"
 )
 
@@ -20,11 +21,18 @@ func errCheck(err error) {
 	if err != nil {
 		panic(err.Error())
 	}
+
 }
 
 func DB_connect() *sql.DB {
 	//dbへのコネクション関数
-	conn := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s ", "root", "root", "docker.nenesan.org", "aria", "disable")
+	var db_user string = os.Getenv("db_user")
+	var db_password string = os.Getenv("db_password")
+	var db_host string = os.Getenv("db_host")
+	var db_name string = os.Getenv("db_name")
+	var db_sslmode string = os.Getenv("db_sslmode")
+
+	conn := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s ", db_user, db_password, db_host, db_name, db_sslmode)
 	db, err := sql.Open("postgres", conn)
 	errCheck(err)
 	return db
@@ -41,14 +49,14 @@ func DB_insert(name string, email string, password string) string {
 	return last_id
 }
 
-func DB_serch_user(name, email string) (n, e string) {//nameとemailを返す
+func DB_serch_user(name, email string) (n, e string) { //nameとemailを返す
 	db := DB_connect()
 	defer db.Close()
 	query := fmt.Sprintf("SELECT * FROM users WHERE name ='%s' or email = '%s'", name, email)
 	fmt.Println(query)
 	rows, err := db.Query(query)
 	for rows.Next() {
-		rows.Scan(&name, email)
+		rows.Scan(&name, &email)
 		errCheck(err)
 	}
 
@@ -59,7 +67,7 @@ func DB_select_user(name string) string {
 	db := DB_connect()
 	defer db.Close()
 	query := fmt.Sprintf("SELECT password  FROM users WHERE name ='%s'", name)
-	var password string;
+	var password string
 	rows, err := db.Query(query)
 	for rows.Next() {
 		rows.Scan(&password)
