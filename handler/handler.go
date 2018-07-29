@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo"
 	"net/http"
 
+	"AriaCTFer/User_manager"
 	"AriaCTFer/msql"
 	"AriaCTFer/tool"
 	"github.com/gorilla/sessions"
@@ -49,11 +50,18 @@ func Register_POST_Page() echo.HandlerFunc {
 			msql.DB_serch_user(name, email)
 			password1, _ := tool.HashPassword(password1)
 			msql.DB_insert(name, email, password1)
-			return c.Redirect(http.StatusMovedPermanently, "login_get")
+			return c.Redirect(http.StatusFound, "/login")
 		} else {
 			return c.Render(http.StatusOK, "register.html", map[string]interface{}{"message": is})
 		}
 
+	}
+}
+
+func User_GET_Page() echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		return c.Render(http.StatusOK, "users.html", User_manager.User_init().User_all_reference())
 	}
 }
 

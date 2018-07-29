@@ -2,6 +2,7 @@ package main
 
 import (
 	"AriaCTFer/msql"
+	"AriaCTFer/stract"
 	"AriaCTFer/tool"
 	"fmt"
 )
@@ -18,12 +19,8 @@ type User_manage struct {
 // コンストラクタ
 // 構造体がpublicでも、そのフィールドが閉じたスコープの場合、
 // パッケージ外から{}を使った初期化はできない。
-func User_init(name, email, password1, password2 string) *User_manage {
+func User_init() *User_manage {
 	user := new(User_manage)
-	user.name = name
-	user.email = email
-	user.password1 = password1
-	user.password2 = password2
 	return user
 }
 
@@ -39,10 +36,16 @@ func (user User_manage) all_info() User_manage {
 	return user
 }
 
-// セッターはレシーバをポインタにしないと値が変更されない
-func (user *User_manage) SetName(name string) string {
+func (user *User_manage) SetData(name, email, password1, password2 string) {
 	user.name = name
-	return user.name
+	user.email = email
+	user.password1 = password1
+	user.password2 = password2
+}
+
+// セッターはレシーバをポインタにしないと値が変更されない
+func (user *User_manage) SetName(name string) {
+	user.name = name
 }
 
 func (user User_manage) GetPpassword() string {
@@ -55,28 +58,22 @@ func (user User_manage) _is() (bool, tool.Check_err) {
 	return is, err
 }
 
-//func (user User_manage) Register() string {
-//	if is { //Validationチェック
-//		n, e := msql.DB_serch_user(user.name, user.email)
-//		fmt.Println(n)
-//		fmt.Println(e)
-//		fmt.Println(n == user.name)
-//		fmt.Println(e == user.email)
-//		if n != user.name || e != user.email {
-//			msql.DB_insert(user.name, user.email, user.password1)
-//			return ""
-//		} else {
-//			return "エラー"
-//		}
-//	} else {
-//		return "エラー"
-//	}
-//}
+func (user User_manage) User_all_reference() []stract.Acount {
+	return msql.DB_select_all_user()
+}
+
+func (user User_manage) User_registration() {
+	is, err := tool.ValidationAll(user.name, user.password1, user.password2, user.email)
+	if is {
+		fmt.Println("ok")
+	} else {
+
+		fmt.Println(err)
+	}
+}
 
 func main() {
-	var user *User_manage = User_init("", "test", "passwrd1", "passowrd")
-	is, account_err := user._is()
-	//fmt.Println(user.SetName("admin"))
-	fmt.Println(is)
-	fmt.Println(account_err)
+	user := User_init()
+	user.SetData("", "test@gmail.com", "1password", "password")
+	user.User_registration()
 }

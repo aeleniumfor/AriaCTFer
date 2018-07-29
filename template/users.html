@@ -1,0 +1,40 @@
+{{template "base_h"}}
+<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Group</th>
+        <th>Name</th>
+        <th>E-mail</th>
+        <th>Permission</th>
+        <th>Create At</th>
+        <th>Update At</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th>ID</th>
+        <th>Group</th>
+        <th>Name</th>
+        <th>E-mail</th>
+        <th>Permission</th>
+        <th>Create At</th>
+        <th>Update At</th>
+    </tr>
+    </tfoot>
+    <tbody>
+    {{ range . }}
+    <tr>
+        <td>{{ .Id }}</td>
+        <td>test group</td>
+        <td>{{ .Name }}</td>
+        <td>{{ .Email }}</td>
+        <td>admin</td>
+        <td>2018/07/29</td>
+        <td>2018/07/29</td>
+    </tr>
+    {{end}}
+    </tbody>
+
+</table>
+{{template "base_f"}}

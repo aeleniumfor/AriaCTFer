@@ -1,6 +1,7 @@
 package msql
 
 import (
+	"AriaCTFer/stract"
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -31,6 +32,12 @@ func DB_connect() *sql.DB {
 	var db_host string = os.Getenv("db_host")
 	var db_name string = os.Getenv("db_name")
 	var db_sslmode string = os.Getenv("db_sslmode")
+
+	db_user = "root"
+	db_password = "root"
+	db_host = "docker.nenesan.org"
+	db_name = "aria"
+	db_sslmode = "disable"
 
 	conn := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s ", db_user, db_password, db_host, db_name, db_sslmode)
 	db, err := sql.Open("postgres", conn)
@@ -74,4 +81,29 @@ func DB_select_user(name string) string {
 		errCheck(err)
 	}
 	return password
+}
+
+func DB_select_all_user() []stract.Acount {
+	db := DB_connect()
+	defer db.Close()
+	var account_array []stract.Acount
+	account := stract.Acount{}
+	rows, _ := db.Query("SELECT id,name,email FROM users")
+	for rows.Next() {
+		var id int
+		var name string
+		var email string
+		if err := rows.Scan(&id, &name, &email); err != nil {
+			panic(err.Error())
+		}
+		account.Id = id
+		account.Name = name
+		account.Email = email
+		account_array = append(account_array, account)
+	}
+	return account_array
+}
+
+func main() {
+	DB_select_all_user()
 }

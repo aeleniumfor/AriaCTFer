@@ -7,7 +7,6 @@ import (
 
 	"AriaCTFer/handler"
 	"AriaCTFer/msql"
-
 	"html/template"
 	"io"
 )
@@ -36,7 +35,11 @@ func main() {
 	e.Renderer = &TemplateRenderer{
 		template.Must(template.ParseGlob("template/*.html")),
 	}
+
 	e.GET("/", handler.IndexPage())
+
+	e.GET("/users", handler.User_GET_Page())
+
 	e.GET("/register", handler.Register_GET_Page())
 	e.POST("/register", handler.Register_POST_Page())
 
